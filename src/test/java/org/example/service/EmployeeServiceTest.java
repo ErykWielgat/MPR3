@@ -1,14 +1,16 @@
 package org.example.service;
+
 import org.example.model.Employee;
 import org.example.model.Position;
 import org.junit.jupiter.api.*;
+
 import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EmployeeServiceTest {
 
     private EmployeeService service;
-
 
     @BeforeEach
     void setUp() {
@@ -39,34 +41,46 @@ class EmployeeServiceTest {
     @Test
     void findEmployeesInCompanyShouldReturnCorrectEmployees() {
         List<Employee> result = service.findEmployeesInCompany("TechCorp");
-        assertEquals(4, result.size());
-        for (Employee e : result) {
-            assertEquals("TechCorp", e.getCompany());
-        }
+        assertAll(
+                () -> assertEquals(4, result.size()),
+                () -> result.forEach(e -> assertEquals("TechCorp", e.getCompany()))
+        );
     }
 
     @Test
     void sortByLastNameShouldReturnAlphabeticalOrder() {
         List<Employee> sorted = service.sortByLastName();
-        assertEquals("Kowalski", sorted.get(0).getFullName().split(" ")[1]);
-        assertEquals("Nowak", sorted.get(1).getFullName().split(" ")[1]);
-        assertEquals("Wianiewski", sorted.get(2).getFullName().split(" ")[1]);
-        assertEquals("Wielgat", sorted.get(3).getFullName().split(" ")[1]);
-        assertEquals("Zielinska", sorted.get(4).getFullName().split(" ")[1]);
+        assertAll(
+                () -> assertEquals("Kowalski", sorted.get(0).getFullName().split(" ")[1]),
+                () -> assertEquals("Nowak", sorted.get(1).getFullName().split(" ")[1]),
+                () -> assertEquals("Wianiewski", sorted.get(2).getFullName().split(" ")[1]),
+                () -> assertEquals("Wielgat", sorted.get(3).getFullName().split(" ")[1]),
+                () -> assertEquals("Zielinska", sorted.get(4).getFullName().split(" ")[1])
+        );
     }
 
     @Test
     void groupByPositionShouldGroupCorrectly() {
         Map<Position, List<Employee>> groups = service.groupByPosition();
-        assertEquals(1, groups.get(Position.CEO).size());
-        assertEquals(1, groups.get(Position.VICE_PRESIDENT).size());
+        assertAll(
+                () -> assertEquals(1, groups.get(Position.CEO).size()),
+                () -> assertEquals(1, groups.get(Position.VICE_PRESIDENT).size()),
+                () -> assertEquals(1, groups.get(Position.DEVELOPER).size()),
+                () -> assertEquals(1, groups.get(Position.MANAGER).size()),
+                () -> assertEquals(1, groups.get(Position.INTERN).size())
+        );
     }
 
     @Test
     void countEmployeesByPositionShouldCountCorrectly() {
         Map<Position, Integer> counts = service.countEmployeesByPosition();
-        assertEquals(1, counts.get(Position.CEO));
-        assertEquals(1, counts.get(Position.VICE_PRESIDENT));
+        assertAll(
+                () -> assertEquals(1, counts.get(Position.CEO)),
+                () -> assertEquals(1, counts.get(Position.VICE_PRESIDENT)),
+                () -> assertEquals(1, counts.get(Position.DEVELOPER)),
+                () -> assertEquals(1, counts.get(Position.MANAGER)),
+                () -> assertEquals(1, counts.get(Position.INTERN))
+        );
     }
 
     @Test
@@ -92,5 +106,34 @@ class EmployeeServiceTest {
         assertEquals(Position.CEO.getBaseSalary(), top.getPosition().getBaseSalary());
     }
 
+    @Test
+    void shouldNotAddEmployeeWithEmptyName() {
+        Employee e = new Employee("", "test@firma.pl", "Firma", Position.DEVELOPER);
+        assertFalse(service.addEmployee(e));
+    }
 
+    @Test
+    void shouldNotAddEmployeeWithEmptyEmail() {
+        Employee e = new Employee("Jan Nowak", "", "Firma", Position.DEVELOPER);
+        assertFalse(service.addEmployee(e));
+    }
+
+    @Test
+    void shouldNotAddEmployeeWithEmptyCompany() {
+        Employee e = new Employee("Jan Nowak", "jan.nowak@firma.pl", "", Position.DEVELOPER);
+        assertFalse(service.addEmployee(e));
+    }
+
+    @Test
+    void shouldNotAddEmployeeWithNullPosition() {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Employee("Jan Nowak", "jan.nowak@firma.pl", "Firma", null)
+        );
+    }
+
+
+    @Test
+    void shouldNotAddNullEmployee() {
+        assertFalse(service.addEmployee(null));
+    }
 }

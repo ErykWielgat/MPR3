@@ -6,9 +6,12 @@ public class Employee {
     private final String email;
     private final String company;
     private final Position position;
-    private final double salary;
+    private double salary;
 
     public Employee(String fullName, String email, String company, Position position) {
+        if (position == null) {
+            throw new IllegalArgumentException("pozycja nie moze być null");
+        }
         this.fullName = fullName;
         this.email = email;
         this.company = company;
@@ -34,6 +37,13 @@ public class Employee {
 
     public double getSalary() {
         return salary;
+    }
+
+    public void setSalary(double salary) {
+        if (salary <= 0) {
+            throw new IllegalArgumentException("Wynagrodzenie musi być większe od zera");
+        }
+        this.salary = salary;
     }
 
     @Override

@@ -7,11 +7,20 @@ public class EmployeeService {
     private final List<Employee> employees = new ArrayList<>();
 
     public boolean addEmployee(Employee employee) {
+        if (employee == null
+                || employee.getFullName() == null || employee.getFullName().isBlank()
+                || employee.getEmail() == null || employee.getEmail().isBlank()
+                || employee.getCompany() == null || employee.getCompany().isBlank()
+                || employee.getPosition() == null) {
+            System.out.println("Nie można dodać pracownika z pustymi danymi");
+            return false;
+        }
         for (Employee e : employees) {
             if (e.getEmail().equalsIgnoreCase(employee.getEmail())) {
                 System.out.println("Pracownik o tym emailu już istnieje: " + employee.getEmail());
                 return false;
             }
+
         }
         employees.add(employee);
         return true;

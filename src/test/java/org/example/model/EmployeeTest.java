@@ -38,6 +38,12 @@ class EmployeeTest {
     void salaryShouldBeFromPosition(){
         assertEquals(Position.DEVELOPER.getBaseSalary(),employee2.getSalary());
     }
+    @Test
+    void settingNegativeSalaryShouldThrowException() {
+        Employee e = new Employee("Jan Kowalski", "jan.k@firma.pl", "Firma", Position.MANAGER);
+
+        assertThrows(IllegalArgumentException.class, () -> e.setSalary(-1000));
+    }
 
 
 }
